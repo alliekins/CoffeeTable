@@ -28,6 +28,8 @@ import flash.geom.Point;
 			return retArr;
 		}
 		
+		//given a hex center, returns the valid settlement locations around the rim
+		//given a settlement center, returns all the settlement locations one hop away
 		public function hexRadius(p:Point) {
 			var retArr:Array = new Array();
 			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/2), p.y + Math.round(BoardPiece.SIDE/2)));
@@ -39,6 +41,8 @@ import flash.geom.Point;
 			return retArr;
 		}
 		
+		//given a hex center, returns the center of each edge- the road locations
+		//given a road center, returns all ajacent road centers.
 		public function hexRoads(p:Point) {
 			var retArr:Array = new Array();
 			retArr.push(new Point(p.x - (BoardPiece.SIDE*Math.sqrt(3)/4), p.y - (BoardPiece.SIDE*3/4)));
@@ -47,6 +51,19 @@ import flash.geom.Point;
 			retArr.push(new Point(p.x + (BoardPiece.SIDE*Math.sqrt(3)/4), p.y + (BoardPiece.SIDE*3/4)));
 			retArr.push(new Point(p.x - (BoardPiece.SIDE*Math.sqrt(3)/4), p.y + (BoardPiece.SIDE*3/4)));
 			retArr.push(new Point(p.x - BoardPiece.SIZE/2, p.y));
+			return retArr;
+		}
+		
+		//given a point, returns al points a half-step away.
+		//used for detecting ajacent roads and settlements.
+		public function hexHalfRadius(p:Point) {
+			var retArr:Array = new Array();
+			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/4), p.y + Math.round(BoardPiece.SIDE/4)));
+			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/4), p.y - Math.round(BoardPiece.SIDE/4)));
+			retArr.push(new Point(p.x - Math.round(BoardPiece.SIZE/4), p.y + Math.round(BoardPiece.SIDE/4)));
+			retArr.push(new Point(p.x - Math.round(BoardPiece.SIZE/4), p.y - Math.round(BoardPiece.SIDE/4)));
+			retArr.push(new Point(p.x, p.y + Math.round(BoardPiece.SIDE/2)));
+			retArr.push(new Point(p.x, p.y - Math.round(BoardPiece.SIDE/2)));
 			return retArr;
 		}
 	}
