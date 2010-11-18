@@ -32,12 +32,12 @@ import flash.geom.Point;
 		//given a settlement center, returns all the settlement locations one hop away
 		public function hexRadius(p:Point) {
 			var retArr:Array = new Array();
-			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/2), p.y + Math.round(BoardPiece.SIDE/2)));
-			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/2), p.y - Math.round(BoardPiece.SIDE/2)));
-			retArr.push(new Point(p.x - Math.round(BoardPiece.SIZE/2), p.y + Math.round(BoardPiece.SIDE/2)));
 			retArr.push(new Point(p.x - Math.round(BoardPiece.SIZE/2), p.y - Math.round(BoardPiece.SIDE/2)));
-			retArr.push(new Point(p.x, p.y + BoardPiece.SIDE));
 			retArr.push(new Point(p.x, p.y - BoardPiece.SIDE));
+			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/2), p.y - Math.round(BoardPiece.SIDE/2)));
+			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/2), p.y + Math.round(BoardPiece.SIDE/2)));
+			retArr.push(new Point(p.x, p.y + BoardPiece.SIDE));
+			retArr.push(new Point(p.x - Math.round(BoardPiece.SIZE/2), p.y + Math.round(BoardPiece.SIDE/2)));
 			return retArr;
 		}
 		
@@ -58,13 +58,33 @@ import flash.geom.Point;
 		//used for detecting ajacent roads and settlements.
 		public function hexHalfRadius(p:Point) {
 			var retArr:Array = new Array();
-			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/4), p.y + Math.round(BoardPiece.SIDE/4)));
-			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/4), p.y - Math.round(BoardPiece.SIDE/4)));
-			retArr.push(new Point(p.x - Math.round(BoardPiece.SIZE/4), p.y + Math.round(BoardPiece.SIDE/4)));
 			retArr.push(new Point(p.x - Math.round(BoardPiece.SIZE/4), p.y - Math.round(BoardPiece.SIDE/4)));
-			retArr.push(new Point(p.x, p.y + Math.round(BoardPiece.SIDE/2)));
 			retArr.push(new Point(p.x, p.y - Math.round(BoardPiece.SIDE/2)));
+			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/4), p.y - Math.round(BoardPiece.SIDE/4)));
+			retArr.push(new Point(p.x + Math.round(BoardPiece.SIZE/4), p.y + Math.round(BoardPiece.SIDE/4)));
+			retArr.push(new Point(p.x, p.y + Math.round(BoardPiece.SIDE/2)));
+			retArr.push(new Point(p.x - Math.round(BoardPiece.SIZE/4), p.y + Math.round(BoardPiece.SIDE/4)));
 			return retArr;
+		}
+		
+		//given a settlement, determines if the road spread is straight up or straight down, then left and right
+		//returns true if there is a valid road location straight up (or would be if the board did not end)
+		public function isRoadAbove(p:Point) {
+			
+			var radiusPoints:Array = this.hexRadius(p);
+			var currPoint:Point;
+			var count:Number = 0;
+			while (currPoint = radiusPoints.pop()) {
+				if (getHexByPoint(currPoint)) {
+					if ((count % 2) == 1) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+				count++;
+			}
+			trace("HexController.isRoadAbove Error: No Hexes Found.");
 		}
 	}
 }

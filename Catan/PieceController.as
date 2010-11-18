@@ -15,17 +15,23 @@ import com.cshmt.coffeetable.*;
 			this.roads = new Array();
 		}
 		
-		public function addSettlement(p:Point, myname:String, player:CatanPlayer) {
+		public function addSettlement(p:Point, myname:String, player:CatanPlayer, isSetup:Boolean) {
 			//trace(isValidSettlementLocation(p, myname, true)); 
-			if (isValidSettlementLocation(p, player, myname, true)) {
+			if (isValidSettlementLocation(p, player, myname, isSetup)) {
 				settlements.push(new Settlement(p, myname, player));
+				return true;
 			} else {
-				trace("Can't place settlement " + myname + " for " + player.playerName + " but I don't know why, write better error handling geez");
+				trace("Can't place settlement " + myname + " for " + player.playerName + ", sorry.");
+				return false;
 			}
 		}
 		
-		public function addRoad(p:Point, r:Number, myname:String, player:CatanPlayer) {
-			roads.push(new Road(p, r, myname, player));
+		public function addRoad(p:Point, r:Number, myname:String, player:CatanPlayer, isSetup:Boolean) {
+			//if (isValidRoadLocation(p, player, isSetup)) {
+				roads.push(new Road(p, r, myname, player));
+			//} else {
+				//trace("Can't place road for " + player.playerName + ", sorry.");
+			//}
 		}
 		
 		//look at point and in neighboring locations and see if there's already any settlements there
@@ -34,6 +40,7 @@ import com.cshmt.coffeetable.*;
 		public function isValidSettlementLocation(p:Point, player:CatanPlayer, n:String, isSetup:Boolean) {
 			//check if there's already a settlement at the point you're trying to add
 			if (getSettlementByPoint(p) != null){
+				trace("Settlement already here!");
 				return false;
 			}
 			//okay your place is clear, now is there any neighboring areas with settlements
@@ -65,19 +72,24 @@ import com.cshmt.coffeetable.*;
 		public function isValidRoadLocation(p:Point, player:CatanPlayer, isSetup:Boolean) {
 			//check if there's a road there already
 			if (getRoadByPoint(p) != null) {
+				trace("Road already here!");
 				return false;
 			}
 			//is there a settlement ajacent?
 			var arr:Array = hc.hexHalfRadius(p);
 			var s:Settlement;
 			for each (var p2:Point in arr) {
-				if (((s = getSettlementByPoint(p2)) != null) && (s.player == this.player)) {
+				if ((s = getSettlementByPoint(p2)) != null) {
+					trace("there's a settlement, now is it ours?");
+				}
+				if (((s = getSettlementByPoint(p2)) != null) && (s.player.playerName == player.playerName)) {
 					//there is a settlement nearby and it's ours!
 					return true;
 				}
 			}
 			//okay so there's no nearby settlements. If this is setup, that's no good
 			if (isSetup) {
+				trace("Found no nearby settlements, can't put a road here.");
 				return false;
 			}
 			//if we're big boys playing a big boy real game, we can connect to roads too
