@@ -1,6 +1,7 @@
 ﻿package {
 
 import flash.geom.Point;
+import com.cshmt.coffeetable.Die;
 
 	public dynamic class HexController extends Array {
 		
@@ -85,6 +86,113 @@ import flash.geom.Point;
 				count++;
 			}
 			trace("HexController.isRoadAbove Error: No Hexes Found.");
+		}
+		
+		public function generateHexes() {
+			var numP:Object = BoardPiece.numPieces;
+			var oceanhexes:Array = new Array();
+			var desertnum:Number;
+			var die1:Die = new Die(6);
+			var die2:Die = new Die(6);
+			for (var i:Number=0; i<19; i++) {
+				var rand:Number = Math.floor(Math.random()*6);
+				var piece:BoardPiece;
+				var resource:String;
+				switch (rand) {
+					case 0:
+						resource = "wheat";
+						break;
+					case 1:
+						resource = "sheep";
+						break;
+					case 2:
+						resource = "wood";
+						break;
+					case 3:
+						resource = "brick";
+						break;
+					case 4:
+						resource = "ore";
+						break;
+					case 5:
+						resource = "desert";
+						break;
+				}		
+				//trace (resource + ": " + numP[resource] + "left. ");
+				if (numP[resource] > 0) {
+					piece = new BoardPiece(i, resource);
+					numP[resource]--;
+					this.push(piece);
+					if (resource == "desert") {
+						desertnum = i;
+					}
+				} else {
+					i--;
+				}
+			}
+			//generate the list of ocean hexes
+			for (i=0; i<18; i++) {
+				rand = Math.floor(Math.random()*2);
+			}
+			
+			
+			//calculate the piece to start numbertoken A
+			var startpiece:Number;
+			if (desertnum < 10) {
+				//on the outside, but not the last one
+				startpiece = desertnum + 1;
+			} else if (desertnum == 11) {
+				//last outside piece, we wrap to 0
+				startpiece = 0;
+			} else if (desertnum > 11 && desertnum != 18) {
+				//inside but not the middle
+				startpiece = (desertnum - 12)*2;
+			} else {
+				//center
+				startpiece = die1.roll() + die2.roll() - 1;
+			}
+			trace ("startpiece: " + startpiece);
+			startpiece += die1.roll() + die2.roll();
+			if (startpiece > 11) {
+				//wrap around instead of going into the center
+				startpiece = startpiece - 12;
+			}
+			
+			for each ( var hex:BoardPiece in this) {
+					trace (hex.num + ": " + hex.resource);
+			}
+			trace ("startpiece: " + startpiece);
+			
+			//assign number tokens
+			var currentPiece:Number = startpiece;
+			for (var j:Number = 0; j<18; j++){
+				if (this[currentPiece].resource != "desert") {
+					//assign token
+					trace(currentPiece);
+					this[currentPiece].addToken(new NumberToken(String.fromCharCode(j+65)));
+					trace(String.fromCharCode(j+65) + NumberToken.mappings[String.fromCharCode(j+65)]);
+				} else {
+					j--;
+				}
+				if (currentPiece == 11 && startpiece != 0) {
+					//circle around, continue on outside
+					currentPiece = 0;
+				}
+				else if (currentPiece == (startpiece - 1)) {
+					//we've finished the outside, drop inside
+					currentPiece = Math.floor(startpiece/2)+12;
+				} 
+				else if (currentPiece == 17 && (Math.floor(startpiece/2) != 0)) {
+					//circle around the inside
+					currentPiece = 12;
+				}
+				else if (currentPiece == Math.floor(startpiece/2)+11 && startpiece != 0) {
+					//we've reached the end of the inside, drop to the center
+					currentPiece = 18;
+				} else {
+					currentPiece++;
+				}
+			}
 		}
 	}
 }
