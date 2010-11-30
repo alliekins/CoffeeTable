@@ -193,6 +193,90 @@ import com.cshmt.coffeetable.Die;
 					currentPiece++;
 				}
 			}
+			
+			//now we've generated all the hexes, give 'em places on the board.
+			placeHexes();
+		}
+		public function placeHexes() {
+			for each ( var hex:BoardPiece in this) {
+				if (hex.resource != "desert") {
+					trace (hex.num + ": " + hex.resource + " at " + hex.numtoken.letter + " for " + hex.numtoken.myNumber);
+				} else {
+					trace (hex.num + ": desert");
+				}
+				var basex:Number = 512;
+				var basey:int = 364;
+				switch(hex.num) {
+					case 0:
+					case 8:
+					case 17:
+						hex.x = basex - BoardPiece.SIZE;
+						break;
+					case 1:
+					case 7:
+					case 18:
+						hex.x = basex;
+						break;
+					case 2:
+					case 6:
+					case 14:
+						hex.x = basex + BoardPiece.SIZE;
+						break;
+					case 3:
+					case 5:
+						hex.x = basex + Math.round((BoardPiece.SIZE*1.5));
+						break;
+					case 9:
+					case 11:
+						hex.x = basex - Math.round((BoardPiece.SIZE*1.5));
+						break;
+					case 12:
+					case 16:
+						hex.x = basex - Math.round((BoardPiece.SIZE*.5));
+						break;
+					case 13:
+					case 15:
+						hex.x = basex + Math.round((BoardPiece.SIZE*.5));
+						break;
+					case 4:
+						hex.x = basex + (BoardPiece.SIZE*2);
+						break;
+					case 10:
+						hex.x = basex - (BoardPiece.SIZE*2);
+						break;
+				}
+				switch(hex.num) {
+					case 0:
+					case 1:
+					case 2:
+						hex.y = basey - Math.round((BoardPiece.LONGSIZE*.75*2));
+						break;
+					case 11:
+					case 12:
+					case 13:
+					case 3:
+						hex.y = basey - Math.round((BoardPiece.LONGSIZE*.75));
+						break;
+					case 10:
+					case 17:
+					case 18:
+					case 14:
+					case 4:
+						hex.y = basey;
+						break;
+					case 9:
+					case 16:
+					case 15:
+					case 5:
+						hex.y = basey + Math.round((BoardPiece.LONGSIZE*.75));
+						break;
+					case 8:
+					case 7:
+					case 6:
+						hex.y = basey + Math.round((BoardPiece.LONGSIZE*.75*2));
+						break;
+				}
+			}
 		}
 	}
 }
